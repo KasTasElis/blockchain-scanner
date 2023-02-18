@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 //import bgpattern from "./bg-pattern.jpeg";
 const BtcSVG = () => (
   <svg
@@ -40,7 +42,7 @@ const Item = () => (
 );
 
 const Widget = ({ title }: { title: string }) => (
-  <div className="w-full">
+  <div className="w-full dark:text-slate-200">
     <h3 className="mb-5 text-md font-semibold text-center text-xl">{title}</h3>
 
     <div className="">
@@ -68,7 +70,7 @@ const SearchBox = () => (
 );
 
 const WalletCard = () => (
-  <div className="p-5 rounded mb-5 bg-slate-100">
+  <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200">
     <h3 className="font-semibold text-xl">💰 Wallet Address</h3>
     <h4 className="mb-5">djasfi1239999JJdsa1o1...123123sdadk</h4>
 
@@ -98,10 +100,10 @@ const WalletCard = () => (
 );
 
 const TransactionCard = () => (
-  <div className="p-5 rounded mb-5 bg-slate-100">
+  <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200">
     <div className="flex justify-between items-center">
       <h3 className="font-semibold text-xl">🔁 Transaction Hash</h3>
-      <button className="text-sm bg-slate-300 py-1 p-3 rounded hover:bg-slate-400 font-semibold">
+      <button className="text-sm bg-slate-300 py-1 p-3 rounded hover:bg-slate-400 font-semibold dark:text-gray-700">
         🔔 Subscribe
       </button>
     </div>
@@ -141,11 +143,13 @@ const TransactionCard = () => (
 );
 
 const NothingToShow = () => (
-  <div className="flex gap-5 items-center justify-center">
+  <div className="flex gap-5 items-center justify-center ">
     <p className="text-5xl">🤷‍♂️</p>
     <div>
-      <h1 className="text-3xl opacity-10 mb-1 font-semibold">Woops...</h1>
-      <h3 className="text-xl">There is nothing to show.</h3>
+      <h1 className="text-3xl opacity-10 mb-1 font-semibold dark:text-white dark:opacity-20">
+        Woops...
+      </h1>
+      <h3 className="text-xl dark:text-slate-200">There is nothing to show.</h3>
     </div>
   </div>
 );
@@ -155,41 +159,76 @@ const Title = () => (
     <div className="h-10">
       <BtcSVG />
     </div>
-    <h1 className="font-semibold text-xl md:text-2xl">Blockchain Scanner</h1>
+    <h1 className="font-semibold text-xl md:text-2xl dark:text-slate-200">
+      Blockchain Scanner
+    </h1>
   </div>
 );
 
-const Header = () => (
-  <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap">
-    <div className="flex gap-5">
-      <p className="text-sm">BTC/EUR: 19,977.55</p>
-      <p className="text-sm">BTC/USD: 22,112.01</p>
-    </div>
+function toggleDarkMode(
+  setDarkState: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  const html = document.querySelector("html");
+  if (!html) return;
 
-    <div className="flex gap-x-10 gap-y-5 flex-col md:flex-row">
-      <div className="flex gap-3 items-center">
-        <span className="text-sm">Display Currency:</span>
-        <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold">
-          EUR
-        </button>
-        <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold">
-          USD
-        </button>
-        <button className="text-sm bg-slate-300 py-1 p-3 rounded font-semibold">
-          BTC
-        </button>
+  if (html.classList.contains("dark")) {
+    setDarkState(false);
+    html.classList.remove("dark");
+    return;
+  }
+
+  html.classList.add("dark");
+  setDarkState(true);
+}
+
+const Header = () => {
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    // initialise dark state
+    const html = document.querySelector("html");
+    if (!html) return;
+
+    if (html.classList.contains("darl")) {
+      setDark(true);
+    }
+  }, []);
+
+  return (
+    <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200">
+      <div className="flex gap-5 ">
+        <p className="text-sm">BTC/EUR: 19,977.55</p>
+        <p className="text-sm">BTC/USD: 22,112.01</p>
       </div>
 
-      <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold">
-        🌙 Dark Mode
-      </button>
+      <div className="flex gap-x-10 gap-y-5 flex-col md:flex-row">
+        <div className="flex gap-3 items-center">
+          <span className="text-sm">Display Currency:</span>
+          <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-600">
+            EUR
+          </button>
+          <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-400">
+            USD
+          </button>
+          <button className="text-sm bg-slate-300 py-1 p-3 rounded font-semibold dark:bg-slate-400">
+            BTC
+          </button>
+        </div>
 
-      <button className="text-sm bg-amber-500 py-1 p-3 rounded hover:bg-amber-400 font-semibold text-amber-900">
-        🔔 Subsribed (2)
-      </button>
+        <button
+          onClick={() => toggleDarkMode(setDark)}
+          className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-400"
+        >
+          {dark ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        </button>
+
+        <button className="text-sm bg-amber-500 py-1 p-3 rounded hover:bg-amber-400 font-semibold text-amber-900">
+          🔔 Subsribed (2)
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const NotificationCard = () => (
   <div className="bg-green-400 shadow-md p-4 rounded text-md flex items-center gap-2">
@@ -218,8 +257,8 @@ const NotificationCard = () => (
 );
 
 const Notifications = () => (
-  <div className="absolute top-5 right-5 flex flex-col gap-3">
-    {[1, 2, 3].map((item) => (
+  <div className="absolute top-5 right-5 flex flex-col gap-3 z-10">
+    {[1, 2, 3, 4, 5, 6, 7].map((item) => (
       <NotificationCard key={item} />
     ))}
   </div>
@@ -227,9 +266,9 @@ const Notifications = () => (
 
 const Modal = () => (
   <div className="absolute top-0 left-0 min-h-screen min-w-full flex items-center justify-center">
-    <div className="fixed top-0 left-0 bg-black h-full w-full opacity-40"></div>
+    <div className="fixed top-0 left-0 bg-black h-full w-full opacity-40 dark:opacity-60"></div>
 
-    <div className="w-full max-w-xl bg-slate-300 shadow-xl flex justify-between items-center flex-col rounded z-10">
+    <div className="w-full max-w-xl bg-slate-300 shadow-xl flex justify-between items-center flex-col rounded z-10 dark:bg-slate-800 dark:text-gray-200">
       <div className="w-full max-w-xl flex justify-between items-center p-4">
         <h3 className="text-lg font-semibold">🔔 Subscribed Transactions</h3>
         <button className="p-1 cursor-pointer hover:opacity-50 ml-3">
@@ -249,7 +288,7 @@ const Modal = () => (
           </svg>
         </button>
       </div>
-      <div className="bg-white rounded-b p-5 w-full flex flex-col gap-4">
+      <div className="bg-white rounded-b p-5 w-full flex flex-col gap-4 dark:bg-slate-700">
         {[1, 2, 3].map((item) => (
           <TxListItem key={item}></TxListItem>
         ))}
@@ -261,8 +300,10 @@ const Modal = () => (
 const TxListItem = () => (
   <div className="flex justify-start gap-4">
     <span className="text-sm opacity-60">2d 11h ago</span>
-    <span className="mr-auto">mdasoOod1235asdJJ123...1dd1</span>
-    <button className="text-sm bg-slate-300 py-1 p-3 rounded hover:bg-slate-400 font-semibold">
+    <span className="mr-auto hover:opacity-50 cursor-pointer">
+      mdasoOod1235asdJJ123...1dd1
+    </span>
+    <button className="text-sm bg-slate-300 py-1 p-3 rounded hover:bg-slate-400 font-semibold dark:text-gray-600">
       🔔 Unsubscribe
     </button>
   </div>
@@ -270,14 +311,20 @@ const TxListItem = () => (
 
 function App() {
   return (
-    <div className="App">
+    <div className="App dark:bg-slate-900 min-h-screen">
       <Header />
 
-      <Notifications />
+      {/* <Notifications />
 
-      <Modal />
+      <Modal /> */}
 
       <div className="py-12 w-full max-w-3xl mx-auto px-3">
+        <div className="flex flex-col md:flex-row items-around gap-y-5 mb-7">
+          <Widget title="📖 History" />
+
+          <Widget title="🔍 Top Searched" />
+        </div>
+
         <Title />
 
         <div>
@@ -285,14 +332,8 @@ function App() {
         </div>
 
         <div>
-          <TransactionCard />
-          <WalletCard />
-        </div>
-
-        <div className="flex flex-col md:flex-row items-around gap-y-5">
-          <Widget title="📖 History" />
-
-          <Widget title="🔍 Top Searched" />
+          {/* <TransactionCard /> */}
+          {/* <WalletCard /> */}
         </div>
       </div>
 
