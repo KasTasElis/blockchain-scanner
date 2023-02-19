@@ -1,6 +1,11 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  ReactNode,
+} from "react";
 
-//import bgpattern from "./bg-pattern.jpeg";
 const BtcSVG = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -35,39 +40,174 @@ const BtcSVG = () => (
   </svg>
 );
 
-const Item = () => (
-  <div className="mb-3 cursor-pointer hover:opacity-75 text-center">
-    💰 asidiisdi123121231asi123diisdi...1sd113
-  </div>
-);
+type TSearch = { query: string; queriedAt: number; count: number };
+type TSearchHistoryContext = {
+  searches: TSearch[];
+  appendSearch: (query: string) => void;
+};
 
-const Widget = ({ title }: { title: string }) => (
-  <div className="w-full dark:text-slate-200">
-    <h3 className="mb-5 text-md font-semibold text-center text-xl">{title}</h3>
+const SearchHistoryContext = createContext<TSearchHistoryContext>({
+  searches: [],
+  appendSearch: () => undefined,
+});
+const useSearchHistory = () => useContext(SearchHistoryContext);
 
-    <div className="">
-      {[1, 2, 3].map((index) => (
-        <Item key={index} />
-      ))}
+const STORAGE_NAME = "BLOCKCHAIN_SEARCH_HISTORY";
+
+const SearchHistoryProvider = ({ children }: { children: ReactNode }) => {
+  const [searches, setSearches] = useState<TSearch[]>([]);
+
+  //const exampleDataStruct = { "query": "1234abc", queriedAt: "1235561234", count: 3 }
+
+  useEffect(() => {
+    // initialize
+    const data = window.localStorage.getItem(STORAGE_NAME);
+
+    if (!searches.length && data) {
+      setSearches(() => JSON.parse(data));
+    }
+  }, []);
+
+  useEffect(() => {
+    // persist search data
+    if (!searches.length) {
+      return;
+    }
+    window.localStorage.setItem(STORAGE_NAME, JSON.stringify(searches));
+  }, [searches]);
+
+  const appendSearch = (query: string) => {
+    // check if it already exists
+    const index = searches.findIndex((search) => search.query === query);
+
+    // item exists, append
+    if (index !== -1) {
+      setSearches((prevSearches) =>
+        prevSearches.map((search, i) =>
+          i === index
+            ? { ...search, count: search.count + 1, queriedAt: Date.now() }
+            : search
+        )
+      );
+      return;
+    }
+
+    // need to create a new one
+    const newItem: TSearch = { queriedAt: Date.now(), count: 1, query };
+    //setSearches([...searches, newItem]);
+    setSearches((prevSearches) => [...prevSearches, newItem]);
+  };
+
+  return (
+    <SearchHistoryContext.Provider value={{ searches, appendSearch }}>
+      {children}
+    </SearchHistoryContext.Provider>
+  );
+};
+
+// contender for unit test
+function getMostRecentSearches(searches: TSearch[], limit = 5): TSearch[] {
+  // Sort the searches in descending order by their queriedAt timestamp
+  const sortedSearches = searches.sort(
+    (a, b) => Number(b.queriedAt) - Number(a.queriedAt)
+  );
+  // Return the first 'limit' number of searches from the sorted array
+  return sortedSearches.slice(0, limit);
+}
+
+// contender for unit test
+function getTopSearches(searches: TSearch[], limit = 5): TSearch[] {
+  // Sort the searches in descending order by their count
+  const sortedSearches = searches.sort((a, b) => b.count - a.count);
+  // Return the first 'limit' number of searches from the sorted array
+  return sortedSearches.slice(0, limit);
+}
+
+const HistoryWidget = () => {
+  const { searches } = useSearchHistory();
+  const data = getMostRecentSearches(searches).map((search) => search.query);
+
+  if (!data.length) return null;
+
+  return (
+    <div className="w-full dark:text-slate-200">
+      <h3 className="mb-5 text-md font-semibold text-center text-xl">
+        📖 History
+      </h3>
+
+      <div className="">
+        {data.map((entry, index) => (
+          <div
+            key={index}
+            className="mb-3 cursor-pointer hover:opacity-75 text-center"
+          >
+            💰 {entry}
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const SearchBox = () => (
-  <div className="py-5 rounded">
-    <form className="flex space-x-4">
-      <input
-        type="text"
-        placeholder="TX Hash / Wallet Address"
-        className="bg-slate-100 p-3 rounded w-full focus-visible:outline-amber-500 text-md"
-        required
-      />
-      <button className="px-5 py-3 bg-amber-500 rounded hover:bg-amber-400 font-semibold text-md md:text-2xl">
-        🔍
-      </button>
-    </form>
-  </div>
-);
+const TopSearchesWidget = () => {
+  const { searches } = useSearchHistory();
+  const data = getTopSearches(searches).map((search) => search.query);
+
+  if (!data.length) return null;
+
+  return (
+    <div className="w-full dark:text-slate-200">
+      <h3 className="mb-5 text-md font-semibold text-center text-xl">
+        🔍 Top Searched
+      </h3>
+
+      <div className="">
+        {data.map((entry, index) => (
+          <div
+            key={index}
+            className="mb-3 cursor-pointer hover:opacity-75 text-center"
+          >
+            💰 {entry}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SearchBox = () => {
+  const { appendSearch } = useSearchHistory();
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const inputElement = document.querySelector(
+      "#searchInput"
+    ) as HTMLInputElement | null;
+    if (!inputElement) {
+      throw Error("Wtf is going on, there is no search input element...?");
+    }
+
+    appendSearch(inputElement.value);
+  };
+
+  return (
+    <div className="py-5 rounded">
+      <form onSubmit={onSubmit} className="flex space-x-4">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="TX Hash / Wallet Address"
+          className="bg-slate-100 p-3 rounded w-full focus-visible:outline-amber-500 text-md"
+          required
+        />
+        <button className="px-5 py-3 bg-amber-500 rounded hover:bg-amber-400 font-semibold text-md md:text-2xl">
+          🔍
+        </button>
+      </form>
+    </div>
+  );
+};
 
 const WalletCard = () => (
   <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200">
@@ -181,7 +321,11 @@ function toggleDarkMode(
   setDarkState(true);
 }
 
-const Header = () => {
+const Header = ({
+  setShowModal,
+}: {
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -222,7 +366,10 @@ const Header = () => {
           {dark ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
 
-        <button className="text-sm bg-amber-500 py-1 p-3 rounded hover:bg-amber-400 font-semibold text-amber-900">
+        <button
+          onClick={() => setShowModal(true)}
+          className="text-sm bg-amber-500 py-1 p-3 rounded hover:bg-amber-400 font-semibold text-amber-900"
+        >
           🔔 Subsribed (2)
         </button>
       </div>
@@ -264,38 +411,65 @@ const Notifications = () => (
   </div>
 );
 
-const Modal = () => (
-  <div className="absolute top-0 left-0 min-h-screen min-w-full flex items-center justify-center">
-    <div className="fixed top-0 left-0 bg-black h-full w-full opacity-40 dark:opacity-60"></div>
+const Modal = ({
+  setShowModal,
+}: {
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  // handle close modal with ESC btn
+  useEffect(() => {
+    const handler = function (event: KeyboardEvent) {
+      if (event.key === "Escape" || event.keyCode === 27) {
+        // do something when escape key is pressed
+        //console.log("Escape key pressed");
+        setShowModal(false);
+      }
+    };
 
-    <div className="w-full max-w-xl bg-slate-300 shadow-xl flex justify-between items-center flex-col rounded z-10 dark:bg-slate-800 dark:text-gray-200">
-      <div className="w-full max-w-xl flex justify-between items-center p-4">
-        <h3 className="text-lg font-semibold">🔔 Subscribed Transactions</h3>
-        <button className="p-1 cursor-pointer hover:opacity-50 ml-3">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+    document.addEventListener("keydown", handler);
+
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
+
+  return (
+    <div className="absolute top-0 left-0 min-h-screen min-w-full flex items-center justify-center">
+      <div
+        onClick={() => setShowModal(false)}
+        className="fixed top-0 left-0 bg-black h-full w-full opacity-40 dark:opacity-60"
+      ></div>
+
+      <div className="w-full max-w-xl bg-slate-300 shadow-xl flex justify-between items-center flex-col rounded z-10 dark:bg-slate-800 dark:text-gray-200">
+        <div className="w-full max-w-xl flex justify-between items-center p-4">
+          <h3 className="text-lg font-semibold">🔔 Subscribed Transactions</h3>
+          <button
+            onClick={() => setShowModal(false)}
+            className="p-1 cursor-pointer hover:opacity-50 ml-3"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-      <div className="bg-white rounded-b p-5 w-full flex flex-col gap-4 dark:bg-slate-700">
-        {[1, 2, 3].map((item) => (
-          <TxListItem key={item}></TxListItem>
-        ))}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="bg-white rounded-b p-5 w-full flex flex-col gap-4 dark:bg-slate-700">
+          {[1, 2, 3].map((item) => (
+            <TxListItem key={item}></TxListItem>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TxListItem = () => (
   <div className="flex justify-start gap-4">
@@ -310,34 +484,38 @@ const TxListItem = () => (
 );
 
 function App() {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="App dark:bg-slate-900 min-h-screen">
-      <Header />
+      <SearchHistoryProvider>
+        <Header setShowModal={setShowModal} />
 
-      {/* <Notifications />
+        {/* <Notifications /> */}
 
-      <Modal /> */}
+        {showModal ? <Modal setShowModal={setShowModal} /> : null}
 
-      <div className="py-12 w-full max-w-3xl mx-auto px-3">
-        <div className="flex flex-col md:flex-row items-around gap-y-5 mb-7">
-          <Widget title="📖 History" />
+        <div className="py-12 w-full max-w-3xl mx-auto px-3">
+          <Title />
 
-          <Widget title="🔍 Top Searched" />
+          <div>
+            <SearchBox />
+          </div>
+
+          <div className="flex flex-col md:flex-row items-around gap-y-5 mb-7 mt-7">
+            <HistoryWidget />
+
+            <TopSearchesWidget />
+          </div>
+
+          <div>
+            {/* <TransactionCard /> */}
+            {/* <WalletCard /> */}
+          </div>
         </div>
 
-        <Title />
-
-        <div>
-          <SearchBox />
-        </div>
-
-        <div>
-          {/* <TransactionCard /> */}
-          {/* <WalletCard /> */}
-        </div>
-      </div>
-
-      <NothingToShow />
+        <NothingToShow />
+      </SearchHistoryProvider>
     </div>
   );
 }
