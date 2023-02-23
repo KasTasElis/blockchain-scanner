@@ -10,11 +10,53 @@ type TWalletInfo = {
   "No. of Transactions": number;
 };
 
+// BTC wallet address
+// - min 26 chars
+// - max 90 chars
+// - do not include the letters I, O, and Q because they can be easily mistaken for the numbers 1 and 0
+// - include the numbers 1-9 and the letters A-H, J-N, P, and R-Z.
+
+// btc wallet address length is meh...
+
+// const WALLET_REGEX = "\b(bc1|[13])[a-zA-HJ-NP-Z0-9]{26,90}\b";
+// const TX_HASH_REGEX = "\b[0-9A-Fa-f]{64}\b";
+// const WALLET_OR_TX_HASH_REGEX =
+//   "\b((bc1|[13])[a-zA-HJ-NP-Z0-9]{26,90}|[0-9A-Fa-f]{64})\b";
+
+enum INPUT_TYPE {
+  BTC_WALLET = "BTC_WALLET",
+  BTC_TX_HASH = "BTC_TX_HASH",
+  NEITHER = "NEITHER",
+}
+
+function isBitcoinTransactionHash(str: string) {
+  const regex = /\b[0-9A-Fa-f]{64}\b/;
+  return regex.test(str);
+}
+
+function isBitcoinWalletAddress(str: string) {
+  const regex = /\b(bc1|[13])[a-zA-HJ-NP-Z0-9]{26,90}\b/;
+  return regex.test(str);
+}
+
+function checkValidity(str: string) {
+  if (isBitcoinWalletAddress(str)) {
+    return INPUT_TYPE.BTC_WALLET;
+  }
+
+  if (isBitcoinTransactionHash(str)) {
+    return INPUT_TYPE.BTC_TX_HASH;
+  }
+
+  return INPUT_TYPE.NEITHER;
+}
+
 const SearchBox = () => {
   const { appendSearch } = useSearchHistory();
   const [walletInfo, setWalletInfo] = useState<TWalletInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState("");
+  const [inputType, setInputType] = useState(null);
 
   const onChange = (e: any) => {
     console.log(e.target.value);
@@ -24,26 +66,37 @@ const SearchBox = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const URL = "https://blockchain.info/rawaddr";
-    const QueryURL = `${URL}/${value}`;
-    const res = await fetch(QueryURL);
-    console.log({ res });
-    const data = await res.json();
-    console.log({ data });
+    const result = checkValidity(value);
+
+    if (result === INPUT_TYPE.BTC_WALLET) {
+      alert("Its a BTC Wallet");
+      return;
+    } else if (result === INPUT_TYPE.BTC_TX_HASH) {
+      alert("Its a BTC TX Hash");
+    } else {
+      alert("Could be neither...");
+    }
+
+    // const URL = "https://blockchain.info/rawaddr";
+    // const QueryURL = `${URL}/${value}`;
+    // const res = await fetch(QueryURL);
+    // console.log({ res });
+    // const data = await res.json();
+    // console.log({ data });
 
     // to historical search record
-    appendSearch(value);
+    //appendSearch(value);
 
     // data.XYZ could be any data.. how would i annotate it here?
-    const newWalletInfo = {
-      Address: data.address,
-      "Total Received": data.total_received,
-      "Total Sent": data.total_sent,
-      "Final Balance": data.final_balance,
-      "No. of Transactions": data.n_tx,
-    };
+    // const newWalletInfo = {
+    //   Address: data.address,
+    //   "Total Received": data.total_received,
+    //   "Total Sent": data.total_sent,
+    //   "Final Balance": data.final_balance,
+    //   "No. of Transactions": data.n_tx,
+    // };
 
-    setWalletInfo(newWalletInfo);
+    // setWalletInfo(newWalletInfo);
   };
 
   const handlePaste = async () => {
@@ -73,12 +126,13 @@ const SearchBox = () => {
             placeholder="TX Hash / Wallet Address"
             className="bg-slate-100 p-3 rounded w-full focus-visible:outline-amber-500 text-md h-full"
             required
-            //pattern="/^([13]{1}[a-km-zA-HJ-NP-Z1-9]{26,33}|bc1[a-z0-9]{39,62})$"
-            maxLength={90}
-            minLength={11}
+            pattern="\b((bc1|[13])[a-zA-HJ-NP-Z0-9]{26,90}|[0-9A-Fa-f]{64})\b" // this does... :D
+            //pattern={WALLET_OR_TX_HASH_REGEX} // this does not work.. no idea why
+            title="Please enter a valid BTC wallet address or a TX hash"
             onChange={onChange}
             value={value}
           />
+
           <div className="absolute right-0 top-0 h-full pr-5 flex justify-center items-center">
             <button
               type="button"

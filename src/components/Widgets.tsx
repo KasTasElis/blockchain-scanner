@@ -2,6 +2,7 @@ import {
   useSearchHistory,
   getMostRecentSearches,
   getTopSearches,
+  displayNicely,
 } from "../utils";
 
 const Widget = ({ title, data }: { title: string; data: string[] }) => {
@@ -17,7 +18,7 @@ const Widget = ({ title, data }: { title: string; data: string[] }) => {
             key={index}
             className="mb-3 cursor-pointer hover:opacity-75 text-center"
           >
-            {item}
+            {displayNicely(item)}
           </div>
         ))}
       </div>
