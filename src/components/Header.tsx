@@ -22,6 +22,33 @@ const Header = ({
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [dark, setDark] = useState(false);
+  const [rates, setRates] = useState({ EUR: null, USD: null });
+
+  useEffect(() => {
+    const URI = "https://blockchain.info/ticker";
+
+    const intLength = 30000;
+    const fetcherInterval = setInterval(() => {
+      fetch(URI)
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          //console.log(data);
+          setRates({ EUR: data["EUR"]["last"], USD: data["USD"]["last"] });
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("There was a problem with the ticket API.");
+        });
+    }, intLength);
+
+    return () => clearInterval(fetcherInterval);
+  }, []);
+
+  useEffect(() => {
+    console.log({ rates });
+  }, [rates]);
 
   useEffect(() => {
     // initialise dark state
@@ -36,8 +63,12 @@ const Header = ({
   return (
     <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200">
       <div className="flex gap-5 ">
-        <p className="text-sm">BTC/EUR: 19,977.55</p>
-        <p className="text-sm">BTC/USD: 22,112.01</p>
+        <p className="text-sm">
+          BTC/EUR: {rates.EUR ? rates.EUR : "Loading..."}
+        </p>
+        <p className="text-sm">
+          BTC/USD: {rates.USD ? rates.USD : "Loading..."}
+        </p>
       </div>
 
       <div className="flex gap-x-10 gap-y-5 flex-col md:flex-row">
