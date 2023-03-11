@@ -3,9 +3,12 @@ import {
   getMostRecentSearches,
   getTopSearches,
   displayNicely,
+  useSearchContext,
 } from "../utils";
 
 const Widget = ({ title, data }: { title: string; data: string[] }) => {
+  const { setValue } = useSearchContext();
+
   return (
     <div className="w-full dark:text-slate-200">
       <h3 className="mb-5 text-md font-semibold text-center text-xl">
@@ -17,6 +20,7 @@ const Widget = ({ title, data }: { title: string; data: string[] }) => {
           <div
             key={index}
             className="mb-3 cursor-pointer hover:opacity-75 text-center"
+            onClick={() => setValue(item)}
           >
             {displayNicely(item)}
           </div>

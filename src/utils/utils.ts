@@ -34,9 +34,56 @@ function displayNicely(str: string) {
   return `${icon} ${shorten}`;
 }
 
+enum INPUT_TYPE {
+  BTC_WALLET = "BTC_WALLET",
+  BTC_TX_HASH = "BTC_TX_HASH",
+  NEITHER = "NEITHER",
+}
+
+function checkIfWalletOrTransaction(str: string) {
+  if (isBitcoinWalletAddress(str)) {
+    return INPUT_TYPE.BTC_WALLET;
+  }
+
+  if (isBitcoinTransactionHash(str)) {
+    return INPUT_TYPE.BTC_TX_HASH;
+  }
+
+  return INPUT_TYPE.NEITHER;
+}
+
+const API_BASE = "https://blockchain.info";
+const TX_API = `${API_BASE}/rawtx`;
+const WALLET_API = `${API_BASE}/rawaddr`;
+
+function getApiUriBasedOnQuery(query: string) {
+  if (isBitcoinWalletAddress(query)) {
+    return `${WALLET_API}/${query}`;
+  }
+
+  if (isBitcoinTransactionHash(query)) {
+    return `${TX_API}/${query}`;
+  }
+
+  throw new Error(
+    "This does not look like a wallet or a transaction hash, so i don't know where to look for data..."
+  );
+}
+
+const makeTheQuery = async (query: string) => {
+  const uri = getApiUriBasedOnQuery(query);
+  const resp = await fetch(uri);
+  const data = await resp.json();
+
+  return data;
+};
+
 export {
   shortenString,
   isBitcoinTransactionHash,
   isBitcoinWalletAddress,
   displayNicely,
+  checkIfWalletOrTransaction,
+  INPUT_TYPE,
+  makeTheQuery,
 };

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSearchHistory } from "../utils";
+import { createContext, useContext, useRef, useState } from "react";
+import { useSearchContext, useSearchHistory } from "../utils";
 import { DataCard } from "../components";
 
 type TWalletInfo = {
@@ -52,30 +52,35 @@ function checkValidity(str: string) {
 }
 
 const SearchBox = () => {
-  const { appendSearch } = useSearchHistory();
-  const [walletInfo, setWalletInfo] = useState<TWalletInfo | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState("");
-  const [inputType, setInputType] = useState(null);
+  //const { appendSearch } = useSearchHistory();
+  //const [walletInfo, setWalletInfo] = useState<TWalletInfo | null>(null);
+  //const [loading, setLoading] = useState(false);
+  //const [value, setValue] = useState("");
+  //const [inputType, setInputType] = useState(null);
+  const { triggerSearch, setValue, loading, data, value, searchType } =
+    useSearchContext();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const onChange = (e: any) => {
-    console.log(e.target.value);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //console.log(e.target.value);
     setValue(e.target.value);
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const result = checkValidity(value);
+    triggerSearch();
 
-    if (result === INPUT_TYPE.BTC_WALLET) {
-      alert("Its a BTC Wallet");
-      return;
-    } else if (result === INPUT_TYPE.BTC_TX_HASH) {
-      alert("Its a BTC TX Hash");
-    } else {
-      alert("Could be neither...");
-    }
+    // const result = checkValidity(value);
+
+    // if (result === INPUT_TYPE.BTC_WALLET) {
+    //   alert("Its a BTC Wallet");
+    //   return;
+    // } else if (result === INPUT_TYPE.BTC_TX_HASH) {
+    //   alert("Its a BTC TX Hash");
+    // } else {
+    //   alert("Could be neither...");
+    // }
 
     // const URL = "https://blockchain.info/rawaddr";
     // const QueryURL = `${URL}/${value}`;
@@ -149,6 +154,20 @@ const SearchBox = () => {
       </form>
 
       {loading ? (
+        <h1>"Loading..."</h1>
+      ) : data ? (
+        <div className="mt-5">
+          <DataCard
+            title="💰 Wallet Address"
+            subTitle={walletInfo.Address}
+            data={{ ...walletInfo }}
+          />
+        </div>
+      ) : (
+        <h1>Nothing to show yet.</h1>
+      )}
+
+      {/* {loading ? (
         <h3 className="text-center text-lg font-semibold p-5">Loading...</h3>
       ) : !walletInfo ? (
         <h3 className="text-center text-lg font-semibold p-5">
@@ -162,7 +181,7 @@ const SearchBox = () => {
             data={{ ...walletInfo }}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

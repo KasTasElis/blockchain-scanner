@@ -62,7 +62,7 @@ const Header = ({
   }, []);
 
   return (
-    <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200 bg-slate-50 dark:bg-slate-700">
+    <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200">
       <div className="flex gap-5">
         <p className="text-sm">
           BTC/EUR: {rates.EUR ? rates.EUR : "Loading..."}
