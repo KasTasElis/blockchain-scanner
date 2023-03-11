@@ -28,20 +28,21 @@ const Header = ({
     const URI = "https://blockchain.info/ticker";
 
     const intLength = 30000;
-    const fetcherInterval = setInterval(() => {
+    const fetchData = () => {
       fetch(URI)
         .then((res) => {
           return res.json();
         })
         .then((data) => {
-          //console.log(data);
           setRates({ EUR: data["EUR"]["last"], USD: data["USD"]["last"] });
         })
         .catch((err) => {
           console.error(err);
           alert("There was a problem with the ticket API.");
         });
-    }, intLength);
+    };
+    fetchData();
+    const fetcherInterval = setInterval(fetchData, intLength);
 
     return () => clearInterval(fetcherInterval);
   }, []);
@@ -61,8 +62,8 @@ const Header = ({
   }, []);
 
   return (
-    <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200">
-      <div className="flex gap-5 ">
+    <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200 bg-slate-50 dark:bg-slate-700">
+      <div className="flex gap-5">
         <p className="text-sm">
           BTC/EUR: {rates.EUR ? rates.EUR : "Loading..."}
         </p>
