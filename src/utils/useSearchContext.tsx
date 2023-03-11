@@ -5,14 +5,16 @@ import {
   checkIfWalletOrTransaction,
   INPUT_TYPE,
 } from "./index";
+import { Data } from "../components/DataCard";
 
 type TSearchContext = {
   setValue: React.Dispatch<React.SetStateAction<string>>;
   value: string;
   loading: boolean;
-  data: [] | null;
+  data: Data | null;
   triggerSearch: () => void;
   searchType: null | INPUT_TYPE;
+  reset: () => void;
 };
 
 const initialState: TSearchContext = {
@@ -22,6 +24,7 @@ const initialState: TSearchContext = {
   data: null,
   triggerSearch: () => undefined,
   searchType: null,
+  reset: () => undefined,
 };
 
 const SearchContext = createContext(initialState);
@@ -44,9 +47,24 @@ const SearchContextProvider = ({ children }: { children: JSX.Element }) => {
     setLoading(false);
   };
 
+  const reset = () => {
+    setData(null);
+    setLoading(false);
+    setValue("");
+    setSearchType(null);
+  };
+
   return (
     <SearchContext.Provider
-      value={{ setValue, loading, data, triggerSearch, value, searchType }}
+      value={{
+        setValue,
+        loading,
+        data,
+        triggerSearch,
+        value,
+        searchType,
+        reset,
+      }}
     >
       {children}
     </SearchContext.Provider>
