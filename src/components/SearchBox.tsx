@@ -121,6 +121,15 @@ const preProcessTransactionData = (transactionJsondata: any) => {
 const WALLET_MOCK_DATA_PRETTY = preProcessWalletData(WALLET_MOCK_DATA);
 const TX_MOCK_DATA_PRETTY = preProcessTransactionData(TX_MOCK_DATA);
 
+const Loading = () => {
+  return (
+    <div className="flex justify-center items-center h-full p-7 gap-2">
+      <div className="animate-spin">⌛️</div>
+      <div className="font-semibold text-slate-400">Loading...</div>
+    </div>
+  );
+};
+
 const SearchBox = () => {
   const { triggerSearch, setValue, loading, data, value, searchType } =
     useSearchContext();
@@ -185,6 +194,8 @@ const SearchBox = () => {
       />
 
       <DataCard title={"🔀 Transaction"} data={TX_MOCK_DATA_PRETTY} />
+
+      <Loading />
     </div>
   );
 };
