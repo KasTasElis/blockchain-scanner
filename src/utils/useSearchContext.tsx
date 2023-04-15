@@ -39,6 +39,7 @@ const SearchContextProvider = ({ children }: { children: JSX.Element }) => {
 
   const triggerSearch = async () => {
     setLoading(true);
+    setData(null); // reseting
     const type = checkIfWalletOrTransaction(value);
     setSearchType(type);
     const response = await makeTheQuery(value);

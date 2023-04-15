@@ -1,4 +1,9 @@
-import { useSearchContext, INPUT_TYPE } from "../utils";
+import {
+  INPUT_TYPE,
+  formatSatoshisToBTC,
+  formatTimestamp,
+  useSearchContext,
+} from "../utils";
 import { DataCard } from "./DataCard";
 
 const TX_MOCK_DATA = {
@@ -60,6 +65,62 @@ const TX_MOCK_DATA = {
   ],
 };
 
+const WALLET_MOCK_DATA = {
+  hash160: "660d4ef3a743e3e696ad990364e555c271ad504b",
+  address: "1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F",
+  n_tx: 82,
+  n_unredeemed: 1,
+  total_received: 15443919556,
+  total_sent: 15441506556,
+  final_balance: 2413000,
+  txs: [],
+};
+
+type TWalletData = {
+  hash160: string;
+  address: string;
+  n_tx: number;
+  total_received: number;
+  total_sent: number;
+  final_balance: number;
+};
+
+const preProcessWalletData = (walletJsondata: TWalletData) => {
+  const { hash160, address, n_tx, total_received, total_sent, final_balance } =
+    walletJsondata;
+
+  return {
+    "Wallet Hash": hash160,
+    "Wallet Address": address,
+    "Number of Transactions": n_tx,
+    "Total Received": formatSatoshisToBTC(total_received),
+    "Total Sent": formatSatoshisToBTC(total_sent),
+    "Wallet Balance": formatSatoshisToBTC(final_balance),
+  };
+};
+
+const preProcessTransactionData = (transactionJsondata: any) => {
+  const { hash, fee, time, out } = transactionJsondata;
+
+  const outAddrs = out.reduce((acc: any, curr: any, index: number) => {
+    acc[`Out BTC Address ${index + 1}`] = curr.addr;
+    return acc;
+  }, {});
+
+  return {
+    "TX Hash": hash,
+    "TX Fee": formatSatoshisToBTC(fee),
+    "Total TX Value": formatSatoshisToBTC(
+      out.reduce((acc: number, curr: { value: number }) => acc + curr.value, 0)
+    ),
+    "Created At": formatTimestamp(time),
+    ...outAddrs,
+  };
+};
+
+const WALLET_MOCK_DATA_PRETTY = preProcessWalletData(WALLET_MOCK_DATA);
+const TX_MOCK_DATA_PRETTY = preProcessTransactionData(TX_MOCK_DATA);
+
 const SearchBox = () => {
   const { triggerSearch, setValue, loading, data, value, searchType } =
     useSearchContext();
@@ -81,7 +142,7 @@ const SearchBox = () => {
 
   return (
     <div className="py-5 rounded">
-      <form onSubmit={onSubmit} className="flex space-x-4">
+      <form onSubmit={onSubmit} className="flex space-x-4 mb-7">
         <div className="w-full relative">
           <input
             id="searchInput"
@@ -106,27 +167,24 @@ const SearchBox = () => {
             </button>
           </div>
         </div>
-        <button className="px-5 py-3 bg-amber-500 rounded hover:bg-amber-400 font-semibold text-md md:text-2xl">
-          🔍
+        <button
+          disabled={loading}
+          className="px-5 py-3 bg-amber-500 rounded hover:bg-amber-400 font-semibold text-md md:text-2xl"
+        >
+          {loading ? "⏳" : "🔍"}
         </button>
       </form>
 
-      <div className="mt-5">
-        {loading ? <h1>Loading...</h1> : null}
-        {data ? (
-          <DataCard
-            title={
-              searchType === INPUT_TYPE.BTC_TX_HASH ? "Transaction" : "Wallet"
-            }
-            subTitle={
-              searchType === INPUT_TYPE.BTC_TX_HASH
-                ? (data!.hash as string)
-                : "No subtitle"
-            }
-            data={TX_MOCK_DATA}
-          />
-        ) : null}
-      </div>
+      <DataCard
+        title={
+          searchType === INPUT_TYPE.BTC_TX_HASH
+            ? "Transaction"
+            : "💰 BTC Wallet"
+        }
+        data={WALLET_MOCK_DATA_PRETTY}
+      />
+
+      <DataCard title={"🔀 Transaction"} data={TX_MOCK_DATA_PRETTY} />
     </div>
   );
 };

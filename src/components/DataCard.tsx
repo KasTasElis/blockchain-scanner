@@ -1,40 +1,39 @@
 import { useSearchContext } from "../utils";
 
-type Primitives = string | number | boolean | Data | Primitives[];
-export type Data = { [label: string]: Primitives };
+type Data = { [label: string]: string | boolean | number };
 
-const DataCard = ({
-  title,
-  subTitle,
-  data,
-}: {
-  title: string;
-  subTitle?: string;
-  data: Data;
-}) => {
+const DataCard = ({ title, data }: { title: string; data: Data }) => {
   const { reset } = useSearchContext();
 
   return (
     <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200 relative">
-      <button
-        onClick={reset}
-        className="bg-slate-200 px-3 py-1 absolute top-3 right-3 rounded hover:bg-slate-300"
-      >
-        ⨉
-      </button>
+      <div className="absolute top-3 right-3">
+        <button
+          onClick={reset}
+          className="bg-slate-200 px-3 py-1 rounded hover:bg-slate-300 mr-3 dark:bg-slate-500 hover:dark:bg-slate-400 font-semibold text-sm"
+        >
+          🔔 Subscribe
+        </button>
+        <button
+          onClick={reset}
+          className="bg-red-500 px-3 py-1 rounded hover:bg-red-400 text-white"
+        >
+          ⨉
+        </button>
+      </div>
 
       <h3 className="font-semibold text-xl">{title}</h3>
-      <h4 className="mb-5">{subTitle}</h4>
 
-      {/* <ul>
-      {Object.keys(data).map((key, index) => (
-        <li key={index} className={data.length === index + 1 ? "mb-1" : ""}>
-          <span className="font-semibold">{`${key}: `}</span>
-          <span>{data[key]}</span>
-        </li>
-      ))}
-    </ul> */}
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <div className="border-b my-5 border-slate-300"></div>
+
+      <ul>
+        {Object.entries(data).map(([key, value], index) => (
+          <li key={index} className="flex justify-between mb-2">
+            <strong>{key}: </strong>
+            <span>{value}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

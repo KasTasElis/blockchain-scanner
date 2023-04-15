@@ -1,3 +1,32 @@
+function formatTimestamp(timestamp: number) {
+  const date = new Date(timestamp * 1000);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+  return `${hours}:${minutes} ${day}-${month}-${year}`;
+}
+
+function formatSatoshisToBTC(satoshis: number) {
+  const btc = satoshis / 100000000;
+  return `BTC ${btc.toFixed(8)}`;
+}
+
 function shortenString(str: string) {
   if (str.length <= 22) {
     return str;
@@ -73,9 +102,13 @@ function getApiUriBasedOnQuery(query: string) {
 const makeTheQuery = async (query: string) => {
   const uri = getApiUriBasedOnQuery(query);
   const resp = await fetch(uri);
-  const data = await resp.json();
+  if (resp.status === 200) {
+    const data = await resp.json();
 
-  return data;
+    return data;
+  }
+
+  return null;
 };
 
 export {
@@ -86,4 +119,6 @@ export {
   checkIfWalletOrTransaction,
   INPUT_TYPE,
   makeTheQuery,
+  formatSatoshisToBTC,
+  formatTimestamp,
 };

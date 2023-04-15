@@ -36,10 +36,10 @@ const Modal = ({
     <div className="absolute top-0 left-0 min-h-screen min-w-full flex items-center justify-center">
       <div
         onClick={() => setShowModal(false)}
-        className="fixed top-0 left-0 bg-black h-full w-full opacity-40 dark:opacity-60"
+        className="fixed top-0 left-0 bg-black h-full w-full opacity-40 dark:opacity-60 z-30"
       ></div>
 
-      <div className="w-full max-w-xl bg-slate-300 shadow-xl flex justify-between items-center flex-col rounded z-10 dark:bg-slate-800 dark:text-gray-200">
+      <div className="w-full max-w-xl bg-slate-300 shadow-xl flex justify-between items-center flex-col rounded z-40 dark:bg-slate-800 dark:text-gray-200">
         <div className="w-full max-w-xl flex justify-between items-center p-4">
           <h3 className="text-lg font-semibold">🔔 Subscribed Transactions</h3>
           <button

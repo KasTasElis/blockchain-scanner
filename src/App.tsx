@@ -1,11 +1,12 @@
 import { useState } from "react";
 import {
-  TopSearchesWidget,
-  HistoryWidget,
   Header,
-  SearchBox,
+  HistoryWidget,
   Modal,
+  Notifications,
+  SearchBox,
   Title,
+  TopSearchesWidget,
 } from "./components";
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
   return (
     <div className="App dark:bg-slate-900 min-h-screen">
       <Header setShowModal={setShowModal} />
+
+      <Notifications />
 
       {showModal ? <Modal setShowModal={setShowModal} /> : null}
 
@@ -24,9 +27,9 @@ function App() {
           <SearchBox />
         </div>
 
+        {/* Footer */}
         <div className="flex flex-col md:flex-row items-around gap-y-5 mb-7 mt-7">
           <HistoryWidget />
-
           <TopSearchesWidget />
         </div>
       </div>
