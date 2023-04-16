@@ -1,10 +1,6 @@
 import { createContext, useContext, useState } from "react";
-import {
-  INPUT_TYPE,
-  checkIfWalletOrTransaction,
-  makeTheQuery,
-  useSearchHistory,
-} from "./index";
+import { INPUT_TYPE, checkIfWalletOrTransaction, makeTheQuery } from "../utils";
+import { useSearchHistory } from "./index";
 
 type TSearchContext = {
   setValue: React.Dispatch<React.SetStateAction<string>>;

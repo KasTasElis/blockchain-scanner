@@ -7,7 +7,7 @@ import {
   RatesContextProvider,
   SearchContextProvider,
   SearchHistoryProvider,
-} from "./utils";
+} from "./hooks";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

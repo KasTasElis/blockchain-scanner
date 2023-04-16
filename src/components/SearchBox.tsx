@@ -1,9 +1,5 @@
-import {
-  INPUT_TYPE,
-  formatTimestamp,
-  useRatesContext,
-  useSearchContext,
-} from "../utils";
+import { useRatesContext, useSearchContext } from "../hooks";
+import { INPUT_TYPE, formatTimestamp } from "../utils";
 import { DataCard } from "./DataCard";
 
 const TX_MOCK_DATA = {

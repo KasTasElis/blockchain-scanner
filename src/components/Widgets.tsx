@@ -1,10 +1,10 @@
 import {
-  useSearchHistory,
   getMostRecentSearches,
   getTopSearches,
-  displayNicely,
   useSearchContext,
-} from "../utils";
+  useSearchHistory,
+} from "../hooks";
+import { displayNicely } from "../utils";
 
 const Widget = ({ title, data }: { title: string; data: string[] }) => {
   const { setValue } = useSearchContext();

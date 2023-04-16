@@ -1,4 +1,4 @@
-import { useSearchContext } from "../utils";
+import { useSearchContext } from "../hooks";
 
 type Data = { [label: string]: string | boolean | number };
 

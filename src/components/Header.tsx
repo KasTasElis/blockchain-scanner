@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { useRatesContext } from "../utils";
+import { useRatesContext } from "../hooks";
 
 import { CURRENCY } from "../consts";
 
