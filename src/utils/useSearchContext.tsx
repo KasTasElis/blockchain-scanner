@@ -1,20 +1,20 @@
 import { createContext, useContext, useState } from "react";
 import {
+  INPUT_TYPE,
+  checkIfWalletOrTransaction,
   makeTheQuery,
   useSearchHistory,
-  checkIfWalletOrTransaction,
-  INPUT_TYPE,
 } from "./index";
-import { Data } from "../components/DataCard";
 
 type TSearchContext = {
   setValue: React.Dispatch<React.SetStateAction<string>>;
   value: string;
   loading: boolean;
-  data: Data | null;
+  data: any;
   triggerSearch: () => void;
   searchType: null | INPUT_TYPE;
   reset: () => void;
+  error: null | string;
 };
 
 const initialState: TSearchContext = {
@@ -25,6 +25,7 @@ const initialState: TSearchContext = {
   triggerSearch: () => undefined,
   searchType: null,
   reset: () => undefined,
+  error: null,
 };
 
 const SearchContext = createContext(initialState);
@@ -33,6 +34,7 @@ const SearchContextProvider = ({ children }: { children: JSX.Element }) => {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
+  const [error, setError] = useState<null | string>(null);
   const [searchType, setSearchType] = useState<INPUT_TYPE | null>(null);
 
   const { appendSearch } = useSearchHistory();
@@ -40,12 +42,22 @@ const SearchContextProvider = ({ children }: { children: JSX.Element }) => {
   const triggerSearch = async () => {
     setLoading(true);
     setData(null); // reseting
+    setError(null); // reseting
     const type = checkIfWalletOrTransaction(value);
     setSearchType(type);
-    const response = await makeTheQuery(value);
-    appendSearch(value);
-    setData(response);
-    setLoading(false);
+    try {
+      const response = await makeTheQuery(value);
+      setData(response);
+    } catch (error) {
+      if (typeof error === "string") {
+        setError(error);
+      }
+
+      setError("Blockchain API returned no data.");
+    } finally {
+      appendSearch(value);
+      setLoading(false);
+    }
   };
 
   const reset = () => {
@@ -53,6 +65,7 @@ const SearchContextProvider = ({ children }: { children: JSX.Element }) => {
     setLoading(false);
     setValue("");
     setSearchType(null);
+    setError(null);
   };
 
   return (
@@ -65,6 +78,7 @@ const SearchContextProvider = ({ children }: { children: JSX.Element }) => {
         value,
         searchType,
         reset,
+        error,
       }}
     >
       {children}

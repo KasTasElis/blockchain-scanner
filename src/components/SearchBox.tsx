@@ -123,15 +123,37 @@ const preProcessTransactionData = (
 
 const Loading = () => {
   return (
-    <div className="flex justify-center items-center h-full p-7 gap-2">
-      <div className="animate-spin">⌛️</div>
+    <div className="flex flex-col justify-center items-center h-full p-7 gap-2">
+      <div className="animate-spin text-[50px]">⌛️</div>
       <div className="font-semibold text-slate-400">Loading...</div>
     </div>
   );
 };
 
+const NoResults = ({ error }: { error: string }) => {
+  return (
+    <div className="flex flex-col justify-center items-center h-full p-7 gap-2">
+      <div className="text-[50px]">🤷‍♂️</div>
+      <div className="font-semibold text-slate-400">{error}</div>
+    </div>
+  );
+};
+
+const Placeholder = () => {
+  return (
+    <div className="flex flex-col justify-center items-center h-full p-7 gap-2">
+      <div className="text-[50px]">🤗</div>
+      <div className="font-semibold text-slate-400 text-center">
+        Enter BTC wallet address
+        <br />
+        or transaction hash to start.
+      </div>
+    </div>
+  );
+};
+
 const SearchBox = () => {
-  const { triggerSearch, setValue, loading, data, value, searchType } =
+  const { triggerSearch, setValue, loading, data, value, searchType, error } =
     useSearchContext();
   const { displayMonetaryValue } = useRatesContext();
 
@@ -158,6 +180,18 @@ const SearchBox = () => {
   const handlePaste = async () => {
     const pasteResult = await navigator.clipboard.readText();
     setValue(pasteResult);
+  };
+
+  const myProcessedData = () => {
+    if (searchType === INPUT_TYPE.BTC_WALLET) {
+      return preProcessWalletData(data, displayMonetaryValue);
+    }
+
+    if (searchType === INPUT_TYPE.BTC_TX_HASH) {
+      return preProcessTransactionData(data, displayMonetaryValue);
+    }
+
+    return data;
   };
 
   return (
@@ -195,18 +229,22 @@ const SearchBox = () => {
         </button>
       </form>
 
-      <DataCard
-        title={
-          searchType === INPUT_TYPE.BTC_TX_HASH
-            ? "Transaction"
-            : "💰 BTC Wallet"
-        }
-        data={WALLET_MOCK_DATA_PRETTY}
-      />
+      {!loading && !data && !error ? <Placeholder /> : null}
 
-      <DataCard title={"🔀 Transaction"} data={TX_MOCK_DATA_PRETTY} />
+      {loading ? <Loading /> : null}
 
-      <Loading />
+      {error ? <NoResults error={error} /> : null}
+
+      {data ? (
+        <DataCard
+          title={
+            searchType === INPUT_TYPE.BTC_TX_HASH
+              ? "🔀 Transaction"
+              : "💰 BTC Wallet"
+          }
+          data={myProcessedData()}
+        />
+      ) : null}
     </div>
   );
 };

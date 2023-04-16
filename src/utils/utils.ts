@@ -1,22 +1,3 @@
-const pretty = (amount: number, currency: "EUR" | "USD" | "BTC") => {
-  if (currency === "BTC") {
-    const btc = amount / 100000000;
-    return `BTC ${btc.toFixed(8)}`;
-  }
-
-  const figure = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    currencyDisplay: "symbol",
-  });
-  return figure.format(amount);
-};
-
-const convertRate = (btc: number, rate: number, currency: "EUR" | "USD") => {
-  const amount = btc * rate;
-  return pretty(amount, currency);
-};
-
 function formatTimestamp(timestamp: number) {
   const date = new Date(timestamp * 1000);
   const hours = date.getHours().toString().padStart(2, "0");
@@ -39,11 +20,6 @@ function formatTimestamp(timestamp: number) {
   const month = monthNames[date.getMonth()];
   const year = date.getFullYear();
   return `${hours}:${minutes} ${day}-${month}-${year}`;
-}
-
-function formatSatoshisToBTC(satoshis: number) {
-  const btc = satoshis / 100000000;
-  return `BTC ${btc.toFixed(8)}`;
 }
 
 function shortenString(str: string) {
@@ -121,13 +97,13 @@ function getApiUriBasedOnQuery(query: string) {
 const makeTheQuery = async (query: string) => {
   const uri = getApiUriBasedOnQuery(query);
   const resp = await fetch(uri);
-  if (resp.status === 200) {
-    const data = await resp.json();
+  const asJson = await resp.json();
 
-    return data;
+  if (resp.status !== 200) {
+    throw new Error("Blockchain API returned no results for this query.");
   }
 
-  return null;
+  return asJson;
 };
 
 export {
@@ -138,8 +114,5 @@ export {
   checkIfWalletOrTransaction,
   INPUT_TYPE,
   makeTheQuery,
-  formatSatoshisToBTC,
   formatTimestamp,
-  convertRate,
-  pretty,
 };

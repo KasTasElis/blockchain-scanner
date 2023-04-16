@@ -11,12 +11,12 @@ import {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <SearchContextProvider>
-      <SearchHistoryProvider>
+    <SearchHistoryProvider>
+      <SearchContextProvider>
         <RatesContextProvider>
           <App />
         </RatesContextProvider>
-      </SearchHistoryProvider>
-    </SearchContextProvider>
+      </SearchContextProvider>
+    </SearchHistoryProvider>
   </React.StrictMode>
 );

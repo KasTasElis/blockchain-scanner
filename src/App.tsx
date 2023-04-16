@@ -3,7 +3,6 @@ import {
   Header,
   HistoryWidget,
   Modal,
-  Notifications,
   SearchBox,
   Title,
   TopSearchesWidget,
@@ -16,7 +15,7 @@ function App() {
     <div className="App dark:bg-slate-900 min-h-screen">
       <Header setShowModal={setShowModal} />
 
-      <Notifications />
+      {/* <Notifications /> */}
 
       {showModal ? <Modal setShowModal={setShowModal} /> : null}
 
