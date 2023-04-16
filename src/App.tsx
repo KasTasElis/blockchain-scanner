@@ -20,7 +20,7 @@ function App() {
       {showModal ? <Modal setShowModal={setShowModal} /> : null}
 
       <div className="py-12 w-full max-w-3xl mx-auto px-3">
-        <Title />
+        <Title title="Blockchain Scanner" />
 
         <div>
           <SearchBox />

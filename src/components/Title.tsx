@@ -32,13 +32,13 @@ const BtcSVG = () => (
   </svg>
 );
 
-const Title = () => (
+const Title = ({ title }: { title: string }) => (
   <div className="flex gap-2 items-center justify-center">
     <div className="h-10">
       <BtcSVG />
     </div>
     <h1 className="font-semibold text-xl md:text-2xl dark:text-slate-200">
-      Blockchain Scanner
+      {title}
     </h1>
   </div>
 );
