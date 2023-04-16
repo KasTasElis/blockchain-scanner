@@ -1,4 +1,8 @@
+import classNames from "classnames";
 import { useEffect, useState } from "react";
+import { useRatesContext } from "../utils";
+
+import { CURRENCY } from "../consts";
 
 function toggleDarkMode(
   setDarkState: React.Dispatch<React.SetStateAction<boolean>>
@@ -16,40 +20,40 @@ function toggleDarkMode(
   setDarkState(true);
 }
 
+const pretty = (amount: number, currency: "EUR" | "USD") => {
+  const figure = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    currencyDisplay: "symbol",
+  });
+  return figure.format(amount);
+};
+
+const Button = ({ currency }: { currency: CURRENCY }) => {
+  const { displayCurrency, setDisplayCurrency } = useRatesContext();
+
+  const isActive = displayCurrency === currency;
+
+  return (
+    <button
+      onClick={() => setDisplayCurrency(currency)}
+      className={classNames(
+        "text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-400 dark:hover:bg-slate-500",
+        { "bg-slate-300 dark:bg-slate-500": isActive }
+      )}
+    >
+      {currency}
+    </button>
+  );
+};
+
 const Header = ({
   setShowModal,
 }: {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [dark, setDark] = useState(false);
-  const [rates, setRates] = useState({ EUR: null, USD: null });
-
-  useEffect(() => {
-    const URI = "https://blockchain.info/ticker";
-
-    const intLength = 30000;
-    const fetchData = () => {
-      fetch(URI)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          setRates({ EUR: data["EUR"]["last"], USD: data["USD"]["last"] });
-        })
-        .catch((err) => {
-          console.error(err);
-          alert("There was a problem with the ticket API.");
-        });
-    };
-    fetchData();
-    const fetcherInterval = setInterval(fetchData, intLength);
-
-    return () => clearInterval(fetcherInterval);
-  }, []);
-
-  useEffect(() => {
-    console.log({ rates });
-  }, [rates]);
+  const { rates, setDisplayCurrency, displayCurrency } = useRatesContext();
 
   useEffect(() => {
     // initialise dark state
@@ -65,25 +69,37 @@ const Header = ({
     <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200">
       <div className="flex gap-5">
         <p className="text-sm">
-          BTC/EUR: {rates.EUR ? rates.EUR : "Loading..."}
+          BTC/EUR: {rates.EUR ? pretty(rates.EUR, "EUR") : "Loading..."}
         </p>
         <p className="text-sm">
-          BTC/USD: {rates.USD ? rates.USD : "Loading..."}
+          BTC/USD: {rates.USD ? pretty(rates.USD, "USD") : "Loading..."}
         </p>
       </div>
 
       <div className="flex gap-x-10 gap-y-5 flex-col md:flex-row">
         <div className="flex gap-3 items-center">
           <span className="text-sm">Display Currency:</span>
-          <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-600">
+          {/* <button
+            onClick={() => setDisplayCurrency(CURRENCY.EUR)}
+            className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-600"
+          >
             EUR
           </button>
-          <button className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-400">
+          <button
+            onClick={() => setDisplayCurrency(CURRENCY.USD)}
+            className="text-sm bg-slate-100 py-1 p-3 rounded hover:bg-slate-200 font-semibold dark:bg-slate-400"
+          >
             USD
           </button>
-          <button className="text-sm bg-slate-300 py-1 p-3 rounded font-semibold dark:bg-slate-400">
+          <button
+            onClick={() => setDisplayCurrency(CURRENCY.BTC)}
+            className="text-sm bg-slate-300 py-1 p-3 rounded font-semibold dark:bg-slate-400"
+          >
             BTC
-          </button>
+          </button> */}
+          <Button currency={CURRENCY.EUR} />
+          <Button currency={CURRENCY.USD} />
+          <Button currency={CURRENCY.BTC} />
         </div>
 
         <button

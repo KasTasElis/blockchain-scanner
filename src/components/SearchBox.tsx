@@ -1,7 +1,7 @@
 import {
   INPUT_TYPE,
-  formatSatoshisToBTC,
   formatTimestamp,
+  useRatesContext,
   useSearchContext,
 } from "../utils";
 import { DataCard } from "./DataCard";
@@ -85,7 +85,7 @@ type TWalletData = {
   final_balance: number;
 };
 
-const preProcessWalletData = (walletJsondata: TWalletData) => {
+const preProcessWalletData = (walletJsondata: TWalletData, transform: any) => {
   const { hash160, address, n_tx, total_received, total_sent, final_balance } =
     walletJsondata;
 
@@ -93,13 +93,16 @@ const preProcessWalletData = (walletJsondata: TWalletData) => {
     "Wallet Hash": hash160,
     "Wallet Address": address,
     "Number of Transactions": n_tx,
-    "Total Received": formatSatoshisToBTC(total_received),
-    "Total Sent": formatSatoshisToBTC(total_sent),
-    "Wallet Balance": formatSatoshisToBTC(final_balance),
+    "Total Received": transform(total_received),
+    "Total Sent": transform(total_sent),
+    "Wallet Balance": transform(final_balance),
   };
 };
 
-const preProcessTransactionData = (transactionJsondata: any) => {
+const preProcessTransactionData = (
+  transactionJsondata: any,
+  transform: any
+) => {
   const { hash, fee, time, out } = transactionJsondata;
 
   const outAddrs = out.reduce((acc: any, curr: any, index: number) => {
@@ -109,17 +112,14 @@ const preProcessTransactionData = (transactionJsondata: any) => {
 
   return {
     "TX Hash": hash,
-    "TX Fee": formatSatoshisToBTC(fee),
-    "Total TX Value": formatSatoshisToBTC(
+    "TX Fee": transform(fee),
+    "Total TX Value": transform(
       out.reduce((acc: number, curr: { value: number }) => acc + curr.value, 0)
     ),
     "Created At": formatTimestamp(time),
     ...outAddrs,
   };
 };
-
-const WALLET_MOCK_DATA_PRETTY = preProcessWalletData(WALLET_MOCK_DATA);
-const TX_MOCK_DATA_PRETTY = preProcessTransactionData(TX_MOCK_DATA);
 
 const Loading = () => {
   return (
@@ -133,6 +133,17 @@ const Loading = () => {
 const SearchBox = () => {
   const { triggerSearch, setValue, loading, data, value, searchType } =
     useSearchContext();
+  const { displayMonetaryValue } = useRatesContext();
+
+  const WALLET_MOCK_DATA_PRETTY = preProcessWalletData(
+    WALLET_MOCK_DATA,
+    displayMonetaryValue
+  );
+
+  const TX_MOCK_DATA_PRETTY = preProcessTransactionData(
+    TX_MOCK_DATA,
+    displayMonetaryValue
+  );
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);

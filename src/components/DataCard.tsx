@@ -30,7 +30,7 @@ const DataCard = ({ title, data }: { title: string; data: Data }) => {
         {Object.entries(data).map(([key, value], index) => (
           <li key={index} className="flex justify-between mb-2">
             <strong>{key}: </strong>
-            <span>{value}</span>
+            <span className="text-align-right">{value}</span>
           </li>
         ))}
       </ul>

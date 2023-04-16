@@ -3,14 +3,19 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-import { SearchHistoryProvider } from "./utils";
-import { SearchContextProvider } from "./utils";
+import {
+  RatesContextProvider,
+  SearchContextProvider,
+  SearchHistoryProvider,
+} from "./utils";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <SearchContextProvider>
       <SearchHistoryProvider>
-        <App />
+        <RatesContextProvider>
+          <App />
+        </RatesContextProvider>
       </SearchHistoryProvider>
     </SearchContextProvider>
   </React.StrictMode>

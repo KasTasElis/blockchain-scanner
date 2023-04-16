@@ -1,3 +1,22 @@
+const pretty = (amount: number, currency: "EUR" | "USD" | "BTC") => {
+  if (currency === "BTC") {
+    const btc = amount / 100000000;
+    return `BTC ${btc.toFixed(8)}`;
+  }
+
+  const figure = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    currencyDisplay: "symbol",
+  });
+  return figure.format(amount);
+};
+
+const convertRate = (btc: number, rate: number, currency: "EUR" | "USD") => {
+  const amount = btc * rate;
+  return pretty(amount, currency);
+};
+
 function formatTimestamp(timestamp: number) {
   const date = new Date(timestamp * 1000);
   const hours = date.getHours().toString().padStart(2, "0");
@@ -121,4 +140,6 @@ export {
   makeTheQuery,
   formatSatoshisToBTC,
   formatTimestamp,
+  convertRate,
+  pretty,
 };
