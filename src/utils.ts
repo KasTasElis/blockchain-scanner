@@ -1,3 +1,5 @@
+import { INPUT_TYPE } from "./consts";
+
 function formatTimestamp(timestamp: number) {
   const date = new Date(timestamp * 1000);
   const hours = date.getHours().toString().padStart(2, "0");
@@ -56,12 +58,6 @@ function displayNicely(str: string) {
   const shorten = shortenString(str);
 
   return `${icon} ${shorten}`;
-}
-
-enum INPUT_TYPE {
-  BTC_WALLET = "BTC_WALLET",
-  BTC_TX_HASH = "BTC_TX_HASH",
-  NEITHER = "NEITHER",
 }
 
 function checkIfWalletOrTransaction(str: string) {
