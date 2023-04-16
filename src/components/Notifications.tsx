@@ -1,3 +1,5 @@
+import { Button } from ".";
+
 const NotificationCard = () => (
   <div className="bg-green-400 shadow-md p-4 rounded text-md flex items-center gap-2">
     <span className="text-2xl">💸</span>
@@ -5,7 +7,7 @@ const NotificationCard = () => (
       You have received <b>0.0244168 BTC</b>
     </p>
 
-    <button className="p-1 cursor-pointer hover:opacity-50 ml-3">
+    <Button colour="clear">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -20,7 +22,7 @@ const NotificationCard = () => (
           d="M6 18L18 6M6 6l12 12"
         />
       </svg>
-    </button>
+    </Button>
   </div>
 );
 

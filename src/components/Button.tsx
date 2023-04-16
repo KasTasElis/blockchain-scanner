@@ -1,17 +1,17 @@
 import classNames from "classnames";
+import { ButtonHTMLAttributes } from "react";
 
-type TButton = {
+type TButton = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
-  colour?: "primary" | "danger" | "light" | "medium";
+  colour?: "primary" | "danger" | "light" | "medium" | "clear";
   size?: "medium" | "large";
-  onClick?: () => void;
 };
 
 const Button = ({
   children,
   colour = "light",
   size = "medium",
-  onClick = () => {},
+  ...rest
 }: TButton) => {
   const classList = classNames(
     "rounded font-semibold hover:opacity-70 transition-all",
@@ -28,7 +28,7 @@ const Button = ({
   );
 
   return (
-    <button onClick={() => onClick()} className={classList}>
+    <button className={classList} {...rest}>
       {children}
     </button>
   );

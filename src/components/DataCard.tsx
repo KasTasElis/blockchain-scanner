@@ -1,4 +1,5 @@
 import { useSearchContext } from "../hooks";
+import { Button } from "./";
 
 type Data = { [label: string]: string | boolean | number };
 
@@ -8,18 +9,10 @@ const DataCard = ({ title, data }: { title: string; data: Data }) => {
   return (
     <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200 relative">
       <div className="absolute top-3 right-3">
-        <button
-          onClick={reset}
-          className="bg-slate-200 px-3 py-1 rounded hover:bg-slate-300 mr-3 dark:bg-slate-500 hover:dark:bg-slate-400 font-semibold text-sm"
-        >
-          🔔 Subscribe
-        </button>
-        <button
-          onClick={reset}
-          className="bg-red-500 px-3 py-1 rounded hover:bg-red-400 text-white"
-        >
+        <Button onClick={reset}>🔔 Subscribe</Button>
+        <Button colour="danger" onClick={reset}>
           ⨉
-        </button>
+        </Button>
       </div>
 
       <h3 className="font-semibold text-xl">{title}</h3>

@@ -1,3 +1,4 @@
+import { Button } from ".";
 import { useRatesContext, useSearchContext } from "../hooks";
 import { INPUT_TYPE, formatTimestamp } from "../utils";
 import { DataCard } from "./DataCard";
@@ -208,21 +209,14 @@ const SearchBox = () => {
           />
 
           <div className="absolute right-0 top-0 h-full flex justify-center items-center bg-slate-100 rounded">
-            <button
-              type="button"
-              className="text-sm cursor-pointer text-gray-500 p-3 hover:text-gray-600"
-              onClick={handlePaste}
-            >
-              PASTE
-            </button>
+            <Button type="button" colour="clear" onClick={handlePaste}>
+              <span className="text-slate-500">PASTE</span>
+            </Button>
           </div>
         </div>
-        <button
-          disabled={loading}
-          className="px-5 py-3 bg-amber-500 rounded hover:bg-amber-400 font-semibold text-md md:text-2xl"
-        >
+        <Button size="large" colour="primary" type="submit" disabled={loading}>
           {loading ? "⏳" : "🔍"}
-        </button>
+        </Button>
       </form>
 
       {!loading && !data && !error ? <Placeholder /> : null}
