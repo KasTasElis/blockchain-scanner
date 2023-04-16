@@ -8,7 +8,7 @@ const DataCard = ({ title, data }: { title: string; data: Data }) => {
 
   return (
     <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200 relative">
-      <div className="absolute top-3 right-3">
+      <div className="absolute top-5 right-5 flex gap-3">
         <Button onClick={reset}>🔔 Subscribe</Button>
         <Button colour="danger" onClick={reset}>
           ⨉

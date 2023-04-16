@@ -7,7 +7,7 @@ const TxListItem = () => (
     <span className="mr-auto hover:opacity-50 cursor-pointer">
       mdasoOod1235asdJJ123...1dd1
     </span>
-    <Button>🔔 Unsubscribe</Button>
+    <Button colour="danger">🔔 Unsubscribe</Button>
   </div>
 );
 
@@ -42,20 +42,7 @@ const Modal = ({
         <div className="w-full max-w-xl flex justify-between items-center p-4">
           <h3 className="text-lg font-semibold">🔔 Subscribed Transactions</h3>
           <Button colour="clear" onClick={() => setShowModal(false)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            ⨉
           </Button>
         </div>
         <div className="bg-white rounded-b p-5 w-full flex flex-col gap-4 dark:bg-slate-700">
