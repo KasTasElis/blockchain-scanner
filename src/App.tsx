@@ -3,7 +3,7 @@ import {
   Header,
   HistoryWidget,
   Modal,
-  SearchBox,
+  Search,
   Title,
   TopSearchesWidget,
 } from "./components";
@@ -22,9 +22,7 @@ function App() {
       <div className="py-12 w-full max-w-3xl mx-auto px-3">
         <Title title="Blockchain Scanner" />
 
-        <div>
-          <SearchBox />
-        </div>
+        <Search />
 
         {/* Footer */}
         <div className="flex flex-col md:flex-row items-around gap-y-5 mb-7 mt-7">

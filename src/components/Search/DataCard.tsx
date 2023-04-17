@@ -1,5 +1,5 @@
-import { useSearchContext } from "../hooks";
-import { Button } from "./";
+import { Button } from "..";
+import { useSearchContext } from "../../hooks";
 
 type Data = { [label: string]: string | boolean | number };
 
