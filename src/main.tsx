@@ -4,6 +4,7 @@ import App from "./App";
 import "./index.css";
 
 import {
+  NotificationsContextProvider,
   RatesContextProvider,
   SearchContextProvider,
   SearchHistoryProvider,
@@ -11,12 +12,14 @@ import {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <SearchHistoryProvider>
-      <SearchContextProvider>
-        <RatesContextProvider>
-          <App />
-        </RatesContextProvider>
-      </SearchContextProvider>
-    </SearchHistoryProvider>
+    <NotificationsContextProvider>
+      <SearchHistoryProvider>
+        <SearchContextProvider>
+          <RatesContextProvider>
+            <App />
+          </RatesContextProvider>
+        </SearchContextProvider>
+      </SearchHistoryProvider>
+    </NotificationsContextProvider>
   </React.StrictMode>
 );

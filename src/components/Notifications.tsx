@@ -1,37 +1,45 @@
+import classNames from "classnames";
 import { Button } from ".";
+import { TNotification, useNotifications } from "../hooks";
 
-const NotificationCard = () => (
-  <div className="bg-green-400 shadow-md p-4 rounded text-md flex items-center gap-2">
-    <span className="text-2xl">💸</span>
-    <p>
-      You have received <b>0.0244168 BTC</b>
-    </p>
+const NotificationCard = ({
+  data,
+}: {
+  data: TNotification & { id: string };
+}) => {
+  const { dismissNotification } = useNotifications();
 
-    <Button colour="clear">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-4 h-4"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </Button>
-  </div>
-);
+  const className = classNames(
+    "shadow-md p-4 rounded text-md flex items-center gap-2",
+    {
+      "bg-green-400 text-green-100": data.colour === "success",
+      "bg-red-400 text-red-100": data.colour === "danger",
+      "bg-orange-400 text-orange-100": data.colour === "warning",
+    }
+  );
 
-const Notifications = () => (
-  <div className="absolute top-5 right-5 flex flex-col gap-3 z-10">
-    {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-      <NotificationCard key={item} />
-    ))}
-  </div>
-);
+  return (
+    <div className={className}>
+      {/* <span className="text-2xl">💸</span> */}
+      <p>{data.message}</p>
+
+      <Button colour="clear" onClick={() => dismissNotification(data.id)}>
+        ⨉
+      </Button>
+    </div>
+  );
+};
+
+const Notifications = () => {
+  const { notifications } = useNotifications();
+
+  return (
+    <div className="absolute top-5 right-5 flex flex-col gap-3 z-10">
+      {notifications.map((notification) => (
+        <NotificationCard key={notification.id} data={notification} />
+      ))}
+    </div>
+  );
+};
 
 export { Notifications, NotificationCard };
