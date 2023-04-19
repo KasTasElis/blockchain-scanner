@@ -18,7 +18,7 @@ const Button = ({
     {
       "text-sm py-1 px-3": size === "medium",
       "text-md py-3 px-5": size === "large",
-      "bg-amber-500 text-amber-900": colour === "primary",
+      "bg-amber-500 text-amber-100": colour === "primary",
       "bg-slate-200 text-slate-900 dark:bg-slate-400 dark:text-slate-200":
         colour === "light",
       "bg-slate-400 text-slate-800 dark:bg-slate-600 dark:text-slate-200":

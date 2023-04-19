@@ -37,7 +37,7 @@ const SearchForm = () => {
 
         <div className="absolute right-0 top-0 h-full flex justify-center items-center bg-slate-100 rounded dark:bg-slate-400">
           <Button type="button" colour="clear" onClick={handlePaste}>
-            <span className="text-slate-500">PASTE</span>
+            <span className="text-slate-500 dark:text-slate-100">PASTE</span>
           </Button>
         </div>
       </div>
