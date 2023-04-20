@@ -51,10 +51,16 @@ const Header = ({
     <div className="flex justify-between p-3 items-center flex-col gap-y-3 flex-wrap dark:text-gray-200">
       <div className="flex gap-5">
         <p className="text-sm">
-          BTC/EUR: {rates.EUR ? pretty(rates.EUR, "EUR") : "Loading..."}
+          BTC/EUR:{" "}
+          <span className="font-semibold">
+            {rates.EUR ? pretty(rates.EUR, "EUR") : "Loading..."}
+          </span>
         </p>
         <p className="text-sm">
-          BTC/USD: {rates.USD ? pretty(rates.USD, "USD") : "Loading..."}
+          BTC/USD:{" "}
+          <span className="font-semibold">
+            {rates.USD ? pretty(rates.USD, "USD") : "Loading..."}
+          </span>
         </p>
       </div>
 

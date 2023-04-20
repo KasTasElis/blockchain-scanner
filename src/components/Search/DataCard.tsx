@@ -1,15 +1,20 @@
 import { Button } from "..";
-import { useSearchContext } from "../../hooks";
+import { useNotifications, useSearchContext } from "../../hooks";
 
 type Data = { [label: string]: string | boolean | number };
 
 const DataCard = ({ title, data }: { title: string; data: Data }) => {
   const { reset } = useSearchContext();
+  const { showNotification } = useNotifications();
 
   return (
-    <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-800 dark:text-gray-200 relative">
+    <div className="p-5 rounded mb-5 bg-slate-100 dark:bg-slate-200 text-slate-800 relative">
       <div className="absolute top-5 right-5 flex gap-3">
-        <Button onClick={reset}>🔔 Subscribe</Button>
+        <Button
+          onClick={() => showNotification({ message: "Subscribe Success! 😊" })}
+        >
+          🔔 Subscribe
+        </Button>
         <Button colour="danger" onClick={reset}>
           ⨉
         </Button>

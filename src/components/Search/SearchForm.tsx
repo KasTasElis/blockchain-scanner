@@ -26,7 +26,7 @@ const SearchForm = () => {
           id="searchInput"
           type="text"
           placeholder="TX Hash / Wallet Address"
-          className="bg-slate-100 p-3 rounded w-full focus-visible:outline-amber-500 text-md h-full dark:bg-slate-400 dark:text-white dark:placeholder:text-slate-500"
+          className="bg-slate-100 p-3 rounded w-full focus-visible:outline-amber-500 text-md h-full dark:bg-slate-200 dark:placeholder:text-slate-500"
           required
           pattern="\b((bc1|[13])[a-zA-HJ-NP-Z0-9]{26,90}|[0-9A-Fa-f]{64})\b" // this does... :D
           //pattern={WALLET_OR_TX_HASH_REGEX} // this does not work.. no idea why
@@ -35,9 +35,9 @@ const SearchForm = () => {
           value={value}
         />
 
-        <div className="absolute right-0 top-0 h-full flex justify-center items-center bg-slate-100 rounded dark:bg-slate-400">
+        <div className="absolute right-0 top-0 h-full flex justify-center items-center bg-slate-100 rounded dark:bg-slate-200">
           <Button type="button" colour="clear" onClick={handlePaste}>
-            <span className="text-slate-500 dark:text-slate-100">PASTE</span>
+            <span className="text-slate-500">PASTE</span>
           </Button>
         </div>
       </div>

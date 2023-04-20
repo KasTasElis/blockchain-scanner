@@ -10,11 +10,11 @@ const NotificationCard = ({
   const { dismissNotification } = useNotifications();
 
   const className = classNames(
-    "shadow-md p-4 rounded text-md flex items-center gap-2",
+    "shadow-md p-4 rounded text-md flex items-center gap-2 text-slate-100",
     {
-      "bg-green-400 text-green-100": data.colour === "success",
-      "bg-red-400 text-red-100": data.colour === "danger",
-      "bg-orange-400 text-orange-100": data.colour === "warning",
+      "bg-green-400": data.colour === "success",
+      "bg-red-400": data.colour === "danger",
+      "bg-orange-400": data.colour === "warning",
     }
   );
 
@@ -34,7 +34,7 @@ const Notifications = () => {
   const { notifications } = useNotifications();
 
   return (
-    <div className="absolute top-5 right-5 flex flex-col gap-3 z-10">
+    <div className="fixed top-5 right-5 flex flex-col gap-3 z-10">
       {notifications.map((notification) => (
         <NotificationCard key={notification.id} data={notification} />
       ))}

@@ -45,7 +45,7 @@ const NotificationsContextProvider = ({
 
     setTimeout(() => {
       dismissNotification(id);
-    }, 3000);
+    }, 5000);
   };
 
   return (
