@@ -5,9 +5,9 @@ const TxListItem = () => (
   <div className="flex justify-start gap-4">
     <span className="text-sm opacity-60">2d 11h ago</span>
     <span className="mr-auto hover:opacity-50 cursor-pointer">
-      mdasoOod1235asdJJ123...1dd1
+      mdasoOod...1dd1
     </span>
-    <Button colour="danger">🔔 Unsubscribe</Button>
+    <Button colour="danger">🔕 Cancel</Button>
   </div>
 );
 
